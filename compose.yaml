@@ -1,0 +1,33 @@
+# Local dev lane: Postgres and the API, with dev-only credentials.
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: of
+      POSTGRES_PASSWORD: of
+      POSTGRES_DB: of
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "of"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    ports:
+      - "127.0.0.1:${OF_DB_PORT:-5432}:5432"
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://of:of@db:5432/of
+      CORS_ALLOWED_ORIGINS: http://localhost:5173
+      OF_API_USER_PASSWORD: demo
+    command: ["sh", "-c", "flask --app app init-db && flask --app app create-user demo; exec gunicorn -b 0.0.0.0:8000 'app:create_app()'"]
+    ports:
+      - "127.0.0.1:${OF_API_PORT:-8000}:8000"
+
+volumes:
+  dbdata:
