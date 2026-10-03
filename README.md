@@ -26,7 +26,7 @@ Flask API for the of-web login page, served by Gunicorn. It checks a username an
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | no | comma-separated browser origins allowed to call the API |
 | `OF_API_USER_PASSWORD` | unset | yes | password that `flask --app app create-user NAME` sets for NAME, replacing an existing one |
 
-In the cluster the Helm chart leaves `DATABASE_URL` unset, sets the non-secret variables, takes `DB_USER` and `DB_PASSWORD` from a Kubernetes Secret, and runs `flask --app app init-db` in an init container before the API starts.
+In the cluster the Helm chart leaves `DATABASE_URL` unset and mounts every setting as a file under `SECRETS_DIR`; on each deploy a Job runs `flask --app app init-db` from the same image before the API pods are updated.
 
 ## Run it with Compose
 
