@@ -1,5 +1,6 @@
 # of-api
 
+
 Flask API for the of-web login page, served by Gunicorn. It checks a username and password against Postgres, returns an opaque bearer token, and stores only the token's SHA-256 with its expiry. The image runs Python 3.13 as uid 10001 on port 8000.
 
 ## API
